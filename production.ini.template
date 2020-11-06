@@ -1,0 +1,60 @@
+###
+# app configuration
+# http://docs.pylonsproject.org/projects/pyramid/en/1.7-branch/narr/environment.html
+###
+
+[openbbs_middleware:main]
+use = egg:openbbs_middleware
+
+# flask_secret_file = /etc/openbbs_middleware/secret
+# flask_security_salt_file = /etc/openbbs_middleware/salt
+# flask_security_confirmable = true
+# flask_security_registerable = true
+
+# flask_static_folder =
+
+mongo_host = localhost
+mongo_port = 27017
+# mongo_ssl = false
+# mongo_sslpemkeyfile = /etc/openbbs_middleware/pemkey.pem
+# mongo_sslca = /etc/openbbs_middleware/root-ca.pem
+
+mail_server = localhost
+mail_port = 25
+mail_use_tls = true
+mail_sender = noreply@localhost
+
+###
+# logging configuration
+# http://docs.pylonsproject.org/projects/pyramid/en/1.7-branch/narr/logging.html
+###
+
+[loggers]
+keys = root, openbbs_middleware
+
+[handlers]
+keys = console
+
+[formatters]
+keys = generic
+
+[logger_root]
+level = DEBUG
+handlers = console
+propagate = 0
+
+[logger_openbbs_middleware]
+level = DEBUG
+handlers = console
+qualname = openbbs_middleware
+propagate = 0
+
+[handler_console]
+class = StreamHandler
+args = (sys.stderr,)
+level = NOTSET
+formatter = generic
+
+[formatter_generic]
+format = %(asctime)s [%(levelname)-5.5s] %(module)s#%(funcName)s@%(lineno)d: %(message)s
+datefmt = %Y-%m-%d %H:%M:%S
