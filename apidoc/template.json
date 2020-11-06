@@ -1,0 +1,103 @@
+{
+    "paths": {
+        "/Account/login": {
+            "post": {
+                "parameters": [
+                    {
+                        "name": "username",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "authenticated"
+                    },
+                    "401": {
+                        "description": "authentication failed"
+                    }
+                }
+            }
+        },
+        "/Account/register": {
+            "post": {
+                "parameters": [
+                    {
+                        "name": "Accept: application/json",
+                        "in": "header",
+                        "required": false
+                    },
+                    {
+                        "name": "username",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "name": "password",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "name": "password_confirm",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "name": "over18",
+                        "in": "formData",
+                        "required": false
+                    },
+                    {
+                        "name": "email",
+                        "in": "formData",
+                        "required": false
+                    },
+                    {
+                        "name": "nickname",
+                        "in": "formData",
+                        "required": false
+                    },
+                    {
+                        "name": "realname",
+                        "in": "formData",
+                        "required": false
+                    },
+                    {
+                        "name": "career",
+                        "in": "formData",
+                        "required": false
+                    },
+                    {
+                        "name": "address",
+                        "in": "formData",
+                        "required": false
+                    }
+                ],
+                 "responses": {
+                    "200": {
+                        "description": "registered"
+                    },
+                    "400": {
+                        "description": "registered failed"
+                    }
+                }
+            }
+        },
+        "/Account/logout": {
+            "get": {
+                "parameters": [
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successfully logout"
+                    }
+                }
+            }
+        }
+    }
+}
