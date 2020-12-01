@@ -1,0 +1,6 @@
+pytest
+pytest-cov
+pytest-mock
+pytest-catchlog
+freezegun
+nose==1.3.7

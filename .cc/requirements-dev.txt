@@ -1,0 +1,4 @@
+git+https://github.com/chhsiao1981/cookiecutter.git@develop#egg=cookiecutter
+nose==1.3.7
+rednose==1.3.0
+sniffer==0.4.0
