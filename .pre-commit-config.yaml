@@ -14,7 +14,7 @@ repos:
     rev: 3.7.9
     hooks:
       - id: flake8
-        args: ['--ignore', 'D100,D104,D205,D202,D200,D211,D400,D401,D402,D403,E501,E402,E722,E712,F841,W504,F401', 'openbbs_middleware']
+        args: ['--ignore', 'D100,D104,D205,D202,D200,D211,D300,D400,D401,D402,D403,E501,E402,E722,E712,F841,W504,F401', 'openbbs_middleware']
         exclude: (^tests|^.cc)
         additional_dependencies:
           - flake8-absolute-import

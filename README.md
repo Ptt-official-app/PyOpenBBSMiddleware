@@ -23,3 +23,10 @@ Unit-Test
 You can do unit-test with:
 
 * `./scripts/test.sh`
+
+Swagger
+-----
+
+You can run swagger with:
+* `./scripts/swagger.sh`
+* go to `http://localhost:5000`

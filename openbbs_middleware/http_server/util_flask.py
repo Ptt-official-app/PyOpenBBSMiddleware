@@ -61,6 +61,15 @@ login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 
 
+def process_params():
+    """Summary
+
+    Returns:
+        TYPE: Description
+    """
+    return None
+
+
 def process_result(err, the_dict, status_code=200, mime='application/json', headers=None):
     """process result
 
@@ -265,3 +274,97 @@ def _init_db():
         except (TypeError, ValueError) as e:
             cfg.logger.error('unable to get user_id: user_id: %s e: %s', user_id, e)
             traceback.print_stack(e)
+
+
+def crossdomain(origin=None, methods=None, headers=None,
+                max_age=None, attach_to_all=True,
+                automatic_options=True):
+    """crossdomain
+
+        Web-browsers requires matching origin for post-data.
+        In the attach-to-all mode (attach-to-all is set to true),
+        We set the Allow-Origin as the request-origin if we think
+        that the request-origin is ok to access our service.
+
+    Args:
+        origin (None, optional): Description
+        methods (None, optional): Description
+        headers (None, optional): Description
+        max_age (None, optional): Description
+        attach_to_all (bool, optional): Description
+        automatic_options (bool, optional): Description
+
+    Returns:
+        TYPE: Description
+    """
+    if methods is not None:
+        methods = ', '.join(sorted(x.upper() for x in methods))
+    if headers is not None and not isinstance(headers, str):
+        headers = ', '.join(x.upper() for x in headers)
+    if origin is not None and not isinstance(origin, str):
+        pass
+        # origin = str(origin)
+    if isinstance(max_age, timedelta):
+        max_age = max_age.total_seconds()
+
+    def get_methods():
+        """Summary
+
+        Returns:
+            TYPE: Description
+        """
+        if methods is not None:
+            return methods
+
+        options_resp = current_app.make_default_options_response()
+        return options_resp.headers['allow']
+
+    def decorator(f):
+        """Summary
+
+        Args:
+            f (TYPE): Description
+
+        Returns:
+            TYPE: Description
+        """
+        def wrapped_function(*args, **kwargs):
+            """Summary
+
+            Args:
+                *args: Description
+                **kwargs: Description
+
+            Returns:
+                TYPE: Description
+            """
+            cfg.logger.warning('origin: (%s/%s)', origin, type(origin))
+
+            if automatic_options and request.method == 'OPTIONS':
+                resp = current_app.make_default_options_response()
+            else:
+                resp = make_response(f(*args, **kwargs))
+            if not attach_to_all and request.method != 'OPTIONS':
+                return resp
+
+            request_orign = request.environ.get('HTTP_ORIGIN', '')
+
+            request_headers = request.environ.get('HTTP_ACCESS_CONTROL_REQUEST_HEADERS', '')
+
+            allow_headers = request_headers if headers is None and request_headers else headers
+
+            h = resp.headers
+
+            h['X-Frame-Options'] = 'SAMEORIGIN'
+            h['Access-Control-Allow-Origin'] = request_orign
+            h['Access-Control-Allow-Methods'] = get_methods()
+            h['Access-Control-Allow-Credentials'] = 'true'
+            if max_age is not None:
+                h['Access-Control-Max-Age'] = str(max_age)
+            h['Access-Control-Allow-Headers'] = allow_headers
+
+            return resp
+
+        f.provide_automatic_options = False
+        return update_wrapper(wrapped_function, f)
+    return decorator
