@@ -15,7 +15,7 @@ setuptools.setup(
     packages=setuptools.find_packages(exclude=["test*"]),
     install_requires=[
         "Flask-Security-Too==3.4.4",
-        "flask-mongoengine==0.9.5",
+        "flask-mongoengine==1.0.0",
         "email-validator==1.1.1",
         "Werkzeug==0.16.1",
         "gevent==20.9.0",
