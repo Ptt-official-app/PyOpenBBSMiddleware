@@ -60,7 +60,16 @@ def parse_csrftoken(text):
 
 
 def http_post(url, data=None, is_json=True):
+    """htt-post
 
+    Args:
+        url (str): Description
+        data (dict, optional): Description
+        is_json (bool, optional): Description
+
+    Returns:
+        TYPE: Description
+    """
     if is_json and type(data) == dict:
         data = json.dumps(data)
 

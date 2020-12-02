@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+"""Summary
+"""
 
 import uuid
 
@@ -10,6 +12,14 @@ from openbbs_middleware import cfg
 
 
 class RegisterForm(ConfirmRegisterForm, NextFormMixin):
+
+    """customized RegisterForm. validating with backend.
+
+    Attributes:
+        csrf_token (TYPE): Description
+        password_confirm (TYPE): Description
+    """
+
     password_confirm = PasswordField(
         get_form_field_label("retype_password"),
         validators=[
@@ -21,6 +31,11 @@ class RegisterForm(ConfirmRegisterForm, NextFormMixin):
     csrf_token = uuid.uuid4()
 
     def validate(self):
+        """Summary
+
+        Returns:
+            TYPE: Description
+        """
         if not super(RegisterForm, self).validate():
             return False
 
@@ -35,6 +50,12 @@ class RegisterForm(ConfirmRegisterForm, NextFormMixin):
         return True
 
     def __init__(self, *args, **kwargs):
+        """Summary
+
+        Args:
+            *args: Description
+            **kwargs: Description
+        """
         super(RegisterForm, self).__init__(*args, **kwargs)
         if not self.next.data:
             self.next.data = request.args.get("next", "")

@@ -1,16 +1,32 @@
 # -*- coding: utf-8 -*-
+"""
+"""
 
 
 from flask_security.forms import Form, PasswordField, get_form_field_label, validators, config_value, _datastore, _security, get_message, Field, StringField, BooleanField
 
 from openbbs_middleware import cfg
 
-from .register_form_mixin import RegisterFormMixin
-from .utils import register_user
-from .utils import get_ip
+from openbbs_middleware.http_server.register_form_mixin import RegisterFormMixin
+from openbbs_middleware.http_server.utils import register_user
+from openbbs_middleware.http_server.utils import get_ip
 
 
 class ConfirmRegisterForm(Form, RegisterFormMixin):
+
+    """customized ConfirmRegisterForm
+
+    Attributes:
+        address (str): Description
+        career (str): Description
+        email (str): Description
+        nickname (str): Description
+        over18 (bool): Description
+        password (str): Description
+        realname (str): Description
+        username (str): Description
+    """
+
     user_id = StringField(
         get_form_field_label("username"), validators=[],
     )
@@ -52,6 +68,11 @@ class ConfirmRegisterForm(Form, RegisterFormMixin):
     )
 
     def validate(self):
+        """Summary
+
+        Returns:
+            TYPE: Description
+        """
         if not super(ConfirmRegisterForm, self).validate():
             return False
 

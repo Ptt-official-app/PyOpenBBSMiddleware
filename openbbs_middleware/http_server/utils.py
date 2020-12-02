@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+"""Summary
+"""
 
 from flask import request
 
@@ -10,11 +12,31 @@ from openbbs_middleware.utils.util_time import get_current_milli_ts
 
 
 def get_ip():
+    """get ip
 
+    Returns:
+        TYPE: Description
+    """
     return request.remote_addr
 
 
 def register_user(user_id, password, ip, email, nickname, realname, career, address, over18):
+    """register user
+
+    Args:
+        user_id (TYPE): Description
+        password (TYPE): Description
+        ip (TYPE): Description
+        email (TYPE): Description
+        nickname (TYPE): Description
+        realname (TYPE): Description
+        career (TYPE): Description
+        address (TYPE): Description
+        over18 (TYPE): Description
+
+    Returns:
+        TYPE: Description
+    """
     url = cfg.config.get('ptt_server', '') + '/register'
 
     params = {
@@ -41,6 +63,16 @@ def register_user(user_id, password, ip, email, nickname, realname, career, addr
 
 
 def validate_user(user_id, password, ip):
+    """validate user
+
+    Args:
+        user_id (TYPE): Description
+        password (TYPE): Description
+        ip (TYPE): Description
+
+    Returns:
+        TYPE: Description
+    """
     url = cfg.config.get('ptt_server', '') + '/login'
     err, result = http_post(url, {'UserID': user_id, 'Passwd': password, "IP": ip})
     if err is not None:

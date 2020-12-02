@@ -1,21 +1,38 @@
 # -*- coding: utf-8 -*-
+"""Summary
+"""
 
 import requests
 from flask_security.forms import LoginForm as SecurityLoginForm, StringField, get_form_field_label
 from flask_security import UserMixin
 
-from .utils import get_ip
-from .utils import validate_user
+from openbbs_middleware.http_server.utils import get_ip
+from openbbs_middleware.http_server.utils import validate_user
 
 import pyutil_mongo
 
 
 class User(UserMixin):
+    """User for flask-security.
+
+    Attributes:
+        id (str): Description
+        is_active (bool): Description
+    """
+
     is_active = True
     id = ''
 
 
 class LoginForm(SecurityLoginForm):
+    """customized login form. validating with backend.
+
+    Attributes:
+        jwt (TYPE): Description
+        user (TYPE): Description
+        username (TYPE): Description
+    """
+
     username = StringField(
         get_form_field_label("username"), validators=[],
     )
@@ -25,6 +42,11 @@ class LoginForm(SecurityLoginForm):
     )
 
     def validate(self):
+        """validate user.
+
+        Returns:
+            TYPE: Description
+        """
         username = self.data.get('username', '')
         password = self.data.get('password', '')
         ip = get_ip()

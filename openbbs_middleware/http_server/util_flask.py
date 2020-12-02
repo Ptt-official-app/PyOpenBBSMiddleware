@@ -44,9 +44,9 @@ from datetime import timedelta
 from werkzeug.middleware.proxy_fix import ProxyFix
 from openbbs_middleware import cfg
 
-from .login_form import LoginForm
-from .confirm_register_form import ConfirmRegisterForm
-from .register_form import RegisterForm
+from openbbs_middleware.http_server.login_form import LoginForm
+from openbbs_middleware.http_server.confirm_register_form import ConfirmRegisterForm
+from openbbs_middleware.http_server.register_form import RegisterForm
 
 ###
 # customized register_user (no need to store password.)
