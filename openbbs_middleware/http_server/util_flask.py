@@ -7,6 +7,20 @@ Attributes:
     login_manager (LoginManager): Flask-Login manager
 """
 
+##########
+# XXX
+# patch register_user
+##########
+from flask_security import registerable
+from flask_security import views
+from openbbs_middleware.http_server.register_user import register_user
+registerable.register_user = register_user
+views.register_user = register_user
+
+from functools import update_wrapper
+from bson.objectid import ObjectId
+import rapidjson as json
+
 import flask
 from flask import Flask, request, make_response, current_app
 
@@ -22,8 +36,6 @@ import flask_security
 
 from mongoengine import StringField, ListField, BooleanField, DateTimeField, EmbeddedDocumentField, EmbeddedDocument
 
-from bson import ObjectId
-import rapidjson as json
 
 import pyutil_mongo
 import traceback
@@ -31,6 +43,10 @@ from datetime import timedelta
 
 from werkzeug.middleware.proxy_fix import ProxyFix
 from openbbs_middleware import cfg
+
+from .login_form import LoginForm
+from .confirm_register_form import ConfirmRegisterForm
+from .register_form import RegisterForm
 
 ###
 # customized register_user (no need to store password.)
@@ -43,15 +59,6 @@ csrf.init_app(app)
 
 login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
-
-
-def process_params():
-    """Summary
-
-    Returns:
-        TYPE: Description
-    """
-    return None
 
 
 def process_result(err, the_dict, status_code=200, mime='application/json', headers=None):
@@ -128,15 +135,20 @@ def _init_config():
             'ssl_ca_certs': cfg.config.get('mongo_sslca', None),
         })
 
+    cfg.logger.info('util_flask._init_config: mongo_settings: %s', mongo_settings)
+
     app.config.update({
         'SECRET_KEY': flask_secret_key,
-        'EXPLAIN_TEMPLATE_LOADING': True,
+        'EXPLAIN_TEMPLATE_LOADING': False,
         'MONGODB_SETTINGS': mongo_settings,
         'SESSION_PROTECTION': 'strong',
         'SECURITY_PASSWORD_HASH': 'sha512_crypt',
         'SECURITY_PASSWORD_SALT': flask_security_salt,
         'SECURITY_RECOVERABLE': False,
         'SECURITY_SEND_REGISTER_EMAIL': False,
+
+        'SECURITY_LOGIN_USER_TEMPLATE': 'login.html',
+        'SECURITY_REGISTER_USER_TEMPLATE': 'register_user.html',
 
         'SECURITY_REGISTERABLE': cfg.config.get('flask_security_registerable', True),
         'SECURITY_CONFIRMABLE': cfg.config.get('flask_security_confirmable', False),
@@ -153,7 +165,6 @@ def _init_config():
         'MAIL_USE_SSL': cfg.config.get('mail_use_ssl', False),
         'MAIL_USER_NAME': cfg.config.get('mail_username', None),
         'MAIL_PASSWORD': cfg.config.get('mail_password', None),
-
         'WTF_CSRF_ENABLED': False,
     })
 
@@ -162,7 +173,7 @@ def _init_config():
 
 
 def _init_db():
-    """Summary
+    """init flask-db
     """
     db = MongoEngine(app)
 
@@ -191,51 +202,30 @@ def _init_db():
         permissions = StringField()
 
     class User(db.Document, UserMixin):
-        """User in flask-security. The default flask-security User information requires email and password. email and password will be removed in real development.
-                https://github.com/Flask-Middleware/flask-security/blob/master/flask_security/forms.py#L355
-
-                Attributes:
-                    active (bool): active
-                    jwt (str): jwt-token
-                    roles (list): roles
-                    user_id (str): username
-        ption
+        """User in flask-security
 
         Attributes:
-            active (TYPE): Description
-            email (TYPE): Description
-            jwt (TYPE): Description
-            password (TYPE): Description
-            roles (TYPE): Description
-            user_id (TYPE): Description
+            active (bool): is-active
+            jwt (str): jwt
+            roles (list): roles
+            uid (str): (to be the guid for the user.)
+            user_id (str): username.
         """
-
-        email = StringField(max_length=1000)
-        password = StringField(max_length=1000)
 
         user_id = StringField(max_length=1000)
         jwt = StringField(max_length=10000)
+        uid = StringField(max_length=1000)
         active = BooleanField(default=True)
         roles = ListField(EmbeddedDocumentField(EmbeddedRole), default=[])
 
-        @classmethod
-        def _get_collection(cls):
-            """_get_collection
-
-            Returns:
-                TYPE: user-collection from pymongo.
-            """
-            db = cfg.config['mongo_dbname']
-            return pyutil_mongo.cfg.config[db]['db']['user']
-
     user_datastore = MongoEngineUserDatastore(db, User, Role)
 
-    Security(app=app, datastore=user_datastore)
+    Security(app=app, datastore=user_datastore, login_form=LoginForm, confirm_register_form=ConfirmRegisterForm, register_form=RegisterForm)
     Mail(app)
 
     @app.login_manager.unauthorized_handler
     def unauth_handler():
-        """Summary
+        """unauth-handler for login-manager
 
         Returns:
             TYPE: Description
@@ -246,19 +236,17 @@ def _init_db():
 
     @app.login_manager.user_loader
     def load_user(the_id):
-        """Summary
+        """load-user
 
         Args:
-            the_id (TYPE): Description
+            the_id (str): the-id corresponding to _id in mongodb.
 
         Returns:
-            TYPE: Description
+            User: user
         """
 
         fields = ['user_id', 'jwt']
         the_id = ObjectId(the_id)
-        err, db_result = pyutil_mongo.db_find('user', {})
-
         try:
             error, db_result = pyutil_mongo.db_find_one('user', {'_id': the_id}, fields)
 

@@ -5,9 +5,10 @@
 
 [openbbs_middleware:main]
 
-# mongo_host = localhost
-# mongo_port = 27017
-# mongo_ssl = false
+mongo_host = localhost
+mongo_port = 27017
+mongo_dbname = dev_user
+mongo_ssl = false
 # mongo_sslpemkeyfile =
 # mongo_sslca =
 # mongo_dbname = user
@@ -16,6 +17,15 @@
 # flask_security_salt_file =
 # flask_security_registerable = true
 # flask_security_confirmable = false
+
+ptt_server = http://localhost:3456
+
+flask_static_folder = ./static
+
+mail_server = localhost
+mail_port = 25
+mail_use_tls = true
+mail_sender = noreply@localhost
 
 ###
 # logging configuration
@@ -37,8 +47,9 @@ handlers = console
 
 [logger_openbbs_middleware]
 level = DEBUG
-handlers =
+handlers = console
 qualname = openbbs_middleware
+propagate = 0
 
 [handler_console]
 class = StreamHandler

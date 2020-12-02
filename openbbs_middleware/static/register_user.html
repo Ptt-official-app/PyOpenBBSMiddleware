@@ -1,0 +1,26 @@
+<html>
+    <body>
+        <form action="/Account/register" method="post" name="register_user_form">
+            {{ register_user_form.hidden_tag() }}
+            <div>
+                <label>username</label>
+                <input type="text" name="username" />
+            </div>
+            <div>
+                <label>password</label>
+                <input type="text" name="password" />
+            </div>
+            <div>
+                <label>password_confirmed</label>
+                <input type="text" name="password_confirm" />
+            </div>
+            <div>
+                <input type="checkbox" name="over18" />
+                <label>over-18</label>
+            </div>
+            <div>
+                <input type="submit" value="Submit" />
+            </div>
+        </form>
+    </body>
+</html>

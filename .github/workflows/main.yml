@@ -48,3 +48,6 @@ jobs:
       - name: Test with nosetests
         run: |
           nosetests
+      - name: Coverage
+        run: |
+          nosetests --with-coverage --cover-package=openbbs_middleware
