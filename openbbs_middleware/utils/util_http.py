@@ -6,6 +6,8 @@ import re
 from http.cookies import SimpleCookie
 
 from openbbs_middleware import cfg
+import rapidjson as json
+import requests
 
 
 def parse_cookies(cookie_list):
@@ -55,3 +57,30 @@ def parse_csrftoken(text):
         return the_match.group(1)
 
     return ''
+
+
+def http_post(url, data=None, is_json=True):
+    """htt-post
+
+    Args:
+        url (str): Description
+        data (dict, optional): Description
+        is_json (bool, optional): Description
+
+    Returns:
+        TYPE: Description
+    """
+    if is_json and type(data) == dict:
+        data = json.dumps(data)
+
+    r = requests.post(url, data=data)
+
+    if r.status_code != 200:
+        return Exception('status_code: %s' % (r.status_code)), {'err': r.text}
+
+    try:
+        the_struct = r.json()
+    except Exception as e:
+        return e, {}
+
+    return None, the_struct
