@@ -3,6 +3,17 @@ PyOpenBBSMiddleware
 
 Python middleware for OpenBBS.
 
+Docker
+-----
+
+You can run docker with the following steps:
+
+* `docker-compose --env-file docker_compose.env -f docker-compose.yaml up -d`
+* register at `http://localhost:3457/Account/register`
+* login at `http://localhost:3457/Account/login`
+* logout at `http://localhost:3457/Account/logout`
+* `telnet localhost 8888` and use the account that you registered.
+
 Develop
 -----
 
