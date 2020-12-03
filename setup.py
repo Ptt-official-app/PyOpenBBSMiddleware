@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
 
 setuptools.setup(
     name="openbbs-middleware",
-    version='0.1.0',
+    version='0.1.1',
     author="",
     author_email="",
     description="",
