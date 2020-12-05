@@ -1,10 +1,8 @@
-PyOpenBBSMiddleware
-==========
+# PyOpenBBSMiddleware
 
 Python middleware for OpenBBS.
 
-Docker
------
+## Docker
 
 You can run docker with the following steps:
 
@@ -16,8 +14,7 @@ You can run docker with the following steps:
 * logout at `http://localhost:3457/Account/logout`
 * `telnet localhost 8888` and use the account that you registered.
 
-Develop
------
+## Develop
 
 You can start developing with the following steps:
 
@@ -30,16 +27,20 @@ Use the following template-script to start a module (automatically generate code
 
 ex: `./scripts/dev_module.sh a.b.c`
 
-Unit-Test
------
+## Unit-Test
 
 You can do unit-test with:
 
 * `./scripts/test.sh`
 
-Swagger
------
+## Swagger
 
 You can run swagger with:
 * `./scripts/swagger.sh`
 * go to `http://localhost:5000`
+
+## More document
+
+You can go to [github Wiki](https://github.com/Ptt-official-app/PyOpenBBSMiddleware/wiki) and see more document there
+
+### [程式架構](https://github.com/Ptt-official-app/PyOpenBBSMiddleware/wiki/%E7%A8%8B%E5%BC%8F%E6%9E%B6%E6%A7%8B%E8%AA%AA%E6%98%8E)
