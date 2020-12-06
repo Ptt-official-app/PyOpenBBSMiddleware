@@ -7,7 +7,7 @@ Python middleware for OpenBBS.
 You can run docker with the following steps:
 
 * copy `docker_compose.env.template` to `docker_compose.env` and modify the settings.
-* `./scripts/docker_initbbs.sh [BBSHOME] chhsiao1981/go-bbs:dev`
+* `./scripts/docker_initbbs.sh [BBSHOME] pttofficialapps/go-pttbbs:latest`
 * `docker-compose --env-file docker_compose.env -f docker-compose.yaml up -d`
 * register at `http://localhost:3457/Account/register`
 * login at `http://localhost:3457/Account/login`
