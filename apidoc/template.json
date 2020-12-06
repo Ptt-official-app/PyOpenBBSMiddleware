@@ -1,4 +1,8 @@
 {
+    "info": {
+        "version": "0.1.3",
+        "title": "Cool product name"
+    },
     "paths": {
         "/Account/login": {
             "post": {
