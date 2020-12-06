@@ -76,7 +76,7 @@ def spec():
 
 
 from openbbs_middleware.api.get_popular_post import get_popular_post
-@app.route(_with_app_prefix('/ArticlePopular'))
+@app.route(_with_app_prefix('/Article/populars'))
 @crossdomain()
 def _get_popular_post():
     """
@@ -91,7 +91,7 @@ def _get_popular_post():
 
 
 from openbbs_middleware.api.get_favorite_board import get_favorite_board
-@app.route(_with_app_prefix('/BoardFavorite/<username>'))
+@app.route(_with_app_prefix('/Board/favorite/<username>'))
 @crossdomain()
 def _get_favorite_board(username):
     """
@@ -109,7 +109,7 @@ def _get_favorite_board(username):
 
 
 from openbbs_middleware.api.find_board_by_name import find_board_by_name
-@app.route(_with_app_prefix('/BoardSearch'))
+@app.route(_with_app_prefix('/Board/search'))
 @crossdomain()
 def _find_board_by_name():
     """
@@ -124,7 +124,7 @@ def _find_board_by_name():
 
 
 from openbbs_middleware.api.get_popular_board_list import get_popular_board_list
-@app.route(_with_app_prefix('/BoardPopular'))
+@app.route(_with_app_prefix('/Board/populars'))
 @crossdomain()
 def _get_popular_board_list():
     """
@@ -139,7 +139,7 @@ def _get_popular_board_list():
 
 
 from openbbs_middleware.api.get_user_info import get_user_info
-@app.route(_with_app_prefix('/User/<username>'))
+@app.route(_with_app_prefix('/User/Users/<username>'))
 @crossdomain()
 def _get_user_info(username):
     """
@@ -157,7 +157,7 @@ def _get_user_info(username):
 
 
 from openbbs_middleware.api.get_user_post_list import get_user_post_list
-@app.route(_with_app_prefix('/UserArticle/<username>'))
+@app.route(_with_app_prefix('/User/Article/<username>'))
 @crossdomain()
 def _get_user_post_list(username):
     """
@@ -175,7 +175,7 @@ def _get_user_post_list(username):
 
 
 from openbbs_middleware.api.get_user_comment_list import get_user_comment_list
-@app.route(_with_app_prefix('/UserComment/<username>'))
+@app.route(_with_app_prefix('/User/Comment/<username>'))
 @crossdomain()
 def _get_user_comment_list(username):
     """
@@ -193,7 +193,7 @@ def _get_user_comment_list(username):
 
 
 from openbbs_middleware.api.get_post_list import get_post_list
-@app.route(_with_app_prefix('/Article/<board>'))
+@app.route(_with_app_prefix('/Article/Articles/<board>'))
 @crossdomain()
 def _get_post_list(board):
     """
@@ -211,7 +211,7 @@ def _get_post_list(board):
 
 
 from openbbs_middleware.api.get_post import get_post
-@app.route(_with_app_prefix('/Article/<board>/<article>'))
+@app.route(_with_app_prefix('/Article/Articles/<board>/<article>'))
 @crossdomain()
 def _get_post(board, article):
     """
@@ -230,7 +230,7 @@ def _get_post(board, article):
 
 
 from openbbs_middleware.api.get_board_detail import get_board_detail
-@app.route(_with_app_prefix('/Board/<board>'))
+@app.route(_with_app_prefix('/Board/Boards/<board>'))
 @crossdomain()
 def _get_board_detail(board):
     """
@@ -248,7 +248,7 @@ def _get_board_detail(board):
 
 
 from openbbs_middleware.api.get_board_title import get_board_title
-@app.route(_with_app_prefix('/BoardTitle/<board>'))
+@app.route(_with_app_prefix('/Board/Title/<board>'))
 @crossdomain()
 def _get_board_title(board):
     """
