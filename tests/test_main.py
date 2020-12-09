@@ -7,36 +7,22 @@ import tempfile
 from http.cookies import SimpleCookie
 
 from openbbs_middleware import cfg
+from openbbs_middleware.main import _with_app_prefix
 from openbbs_middleware.http_server import util_flask
 
 from openbbs_middleware import main
 from openbbs_middleware.utils.util_http import parse_cookies
 
+from openbbs_middleware.api import register_client
+from openbbs_middleware.api import account_register
+
+from unittest import mock
+from tests.mock import mocked_requests_post
 import mongomock
 import pyutil_mongo
-import pyutil_cfg
-from unittest import mock
-import requests
 
 
-def mocked_requests_post(*args, **kwargs):
-    class MockResponse:
-        def __init__(self, json_data, status_code, text):
-            self.json_data = json_data
-            self.status_code = status_code
-            self.text = text
-
-        def json(self):
-            return self.json_data
-
-    if args[0] == 'http://localhost:3456/register':
-        return MockResponse({"Jwt": "main_register"}, 200, '')
-    elif args[0] == 'http://localhost:3456/login':
-        return MockResponse({"Jwt": "main_register"}, 200, '')
-
-    return MockResponse(None, 404)
-
-
+@mock.patch('requests.post', side_effect=mocked_requests_post)
 class TestMain(unittest.TestCase):
     def setUp(self):
         self.app = util_flask.app
@@ -44,52 +30,46 @@ class TestMain(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_index(self):
+    def test_index(self, the_mock):
         '''
         test_index
         '''
-        ret = self.app.get('/Account/logout')
-        self.assertEqual(302, ret.status_code)
-
-        ret = self.app.get('/')
+        with self.app.test_client() as c:
+            ret = c.get('/')
         self.assertEqual(401, ret.status_code)
 
-    @mock.patch('requests.post', side_effect=mocked_requests_post)
-    def test_index2(self, mock_post):
+    @mongomock.patch(servers=(('localhost', 27017),))
+    def test_index2(self, the_mock):
         '''
-        test_index after login
+        test_index
         '''
-        logging.info('cfg.config: %s', cfg.config)
+        with self.app.test_client() as c:
 
-        ret = self.app.get('/Account/logout')
-        self.assertEqual(302, ret.status_code)
+            client_id = 'test_client_id'
+            client_secret = 'test_client_secret'
+            ret = c.post(_with_app_prefix(register_client.ROUTE), json={'client_id': client_id, 'client_secret': client_secret}, environ_base={'REMOTE_ADDR': '10.1.2.3'})
+            self.assertEqual(200, ret.status_code)
 
-        ret = self.app.get('/Account/register')
-        self.assertEqual(200, ret.status_code)
-        the_headers = ret.headers
+            params = {
+                'client_id': client_id,
+                'client_secret': client_secret,
+                'username': 'SYSOP',
+                'password': '123123',
+                'password_confirm': '123123',
+                'over18': True,
+            }
+            ret = c.post(_with_app_prefix(account_register.ROUTE), json=params, environ_base={'REMOTE_ADDR': '10.1.2.3'})
+            self.assertEqual(200, ret.status_code)
 
-        headers = {
-        }
+            data = ret.json
 
-        data = {
-            'user_id': 'test_user_id',
-            'password': '123123',
-            'password_confirm': '123123',
-            'over18': True,
-        }
+            access_token = data.get('access_token', '')
 
-        ret = self.app.post('/Account/register', data=data, headers=headers)
-        self.assertEqual(302, ret.status_code)
+            headers = {
+                'Authorization': 'bearer %s' % (access_token),
+            }
 
-        cfg.logger.info('after register: headers: %s content :%s', ret.headers, ret.data.decode('utf-8'))
+            cfg.logger.info('to get /: data: %s access_token: %s headers: %s', data, access_token, headers)
 
-        ret = self.app.post('/Account/login')
-        self.assertEqual(302, ret.status_code)
-
-        ret = self.app.get('/')
-        self.assertEqual(200, ret.status_code)
-
-    def test_index3(self):
-        cfg.logger.debug('headers: %s', cfg.config['test_headers'])
-        ret = self.app.get('/', headers=cfg.config['test_headers'])
-        self.assertEqual(200, ret.status_code)
+            ret = c.get('/', environ_base={'REMOTE_ADDR': '10.1.2.3'}, headers=headers)
+            self.assertEqual(200, ret.status_code)

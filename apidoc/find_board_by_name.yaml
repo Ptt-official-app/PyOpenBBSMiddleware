@@ -2,64 +2,19 @@ FindBoardByName
 ---
 tags:
   - board
-definitions:
 parameters:
+  - '$ref': '#/definitions/ParamsAuthorization'
   - name: 'name'
     in: 'query'
-    required: true
-    description: "sub-string of the board-name (bid) to search for."
-    type: string
-  - name: 'startBID'
-    in: 'query'
     required: false
-    description: "starting board-id, '' if fetch from the beginning."
+    description: "query string, '' returns all boards"
     type: string
-  - name: 'max'
-    in: 'query'
-    required: false
-    description: "max number of the returned boards, requiring <= 1000"
-    type: number
-    default: 1000
+    default: ''
+  - '$ref': '#/definitions/ParamsStartIdx'
+  - '$ref': '#/definitions/ParamsMax'
 responses:
   200:
     description:
     schema:
       '$id': https://json-schema.org/draft/2019-09/output/schema
-      type: object
-      properties:
-        list:
-          type: array
-          items:
-            type: object
-            properties:
-              bsn:
-                type: string
-              bid:
-                type: string
-              title:
-                type: string
-              flag:
-                type: number
-              boardType:
-                type: number
-                description: board-category-id (gid)
-              cat:
-                type: string
-                description: board-category (string)
-              onlineCount:
-                type: number
-              moderators:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    usn:
-                      type: string
-                    uid:
-                      type: string
-              read:
-                type: boolean
-                description: reached the end of the post-list (or not).
-        nextBID:
-          type: string
-          description: next board-id. '' if reached end-of-the-list.
+      '$ref': '#/definitions/BoardList'

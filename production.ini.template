@@ -7,8 +7,9 @@
 
 mongo_host = localhost
 mongo_port = 27017
-mongo_dbname = dev_user
+mongo_dbname = dev_ptt
 mongo_ssl = false
+mongo_protocol = mongodb
 # mongo_sslpemkeyfile =
 # mongo_sslca =
 # mongo_dbname = user
@@ -17,8 +18,10 @@ mongo_ssl = false
 # flask_security_salt_file =
 # flask_security_registerable = true
 # flask_security_confirmable = false
+host = localhost:3457
 
-ptt_server = http://localhost:3456
+# embed http-prefix in ptt_server
+ptt_server = http://localhost:3456/v1
 
 flask_static_folder = ./static
 

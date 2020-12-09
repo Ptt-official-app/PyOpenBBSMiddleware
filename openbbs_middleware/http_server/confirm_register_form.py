@@ -8,8 +8,7 @@ from flask_security.forms import Form, PasswordField, get_form_field_label, vali
 from openbbs_middleware import cfg
 
 from openbbs_middleware.http_server.register_form_mixin import RegisterFormMixin
-from openbbs_middleware.http_server.utils import register_user
-from openbbs_middleware.http_server.utils import get_ip
+from openbbs_middleware.account.register_user import register_user
 
 
 class ConfirmRegisterForm(Form, RegisterFormMixin):
@@ -111,7 +110,6 @@ class ConfirmRegisterForm(Form, RegisterFormMixin):
 
             user_id = self.user_id.data
             password = self.password.data
-            ip = get_ip()
 
             email = self.email.data
             nickname = self.nickname.data
@@ -120,9 +118,9 @@ class ConfirmRegisterForm(Form, RegisterFormMixin):
             address = self.address.data
             over18 = self.over18.data
 
-            err, result = register_user(user_id, password, ip, email, nickname, realname, career, address, over18)
-            if err is not None:
-                self.user_id.errors = result['err']
+            err, result = register_user(user_id, password, email, nickname, realname, career, address, over18)
+            if err:
+                self.user_id.errors = result
                 return False
 
             self.jwt.data = result

@@ -2,8 +2,8 @@ GetBoardDetail
 ---
 tags:
   - board
-definitions:
 parameters:
+  - '$ref': '#/definitions/ParamsAuthorization'
   - name: 'board'
     in: 'path'
     required: true

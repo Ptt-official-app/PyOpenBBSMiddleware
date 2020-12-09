@@ -7,6 +7,8 @@ fi
 
 host=$1
 
+apidoc/yamltojson.py apidoc/template.yaml apidoc/template.json
+
 flaskswagger openbbs_middleware.main:app --host ${host} --base-path / --out-dir swagger --from-file-keyword=swagger_from_file --template ./apidoc/template.json
 
 docker container stop swagger-ui

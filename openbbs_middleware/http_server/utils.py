@@ -11,23 +11,12 @@ from openbbs_middleware.utils.util_http import http_post
 from openbbs_middleware.utils.util_time import get_current_milli_ts
 
 
-def get_ip():
-    """get ip
-
-    Returns:
-        TYPE: Description
-    """
-    return request.remote_addr
-
-
-def register_user(user_id, password, ip, email, nickname, realname, career, address, over18):
+def register_user(user_id, password, email, nickname, realname, career, address, over18):
     """register user
 
     Args:
         user_id (TYPE): Description
         password (TYPE): Description
-        ip (TYPE): Description
-        email (TYPE): Description
         nickname (TYPE): Description
         realname (TYPE): Description
         career (TYPE): Description
@@ -37,49 +26,3 @@ def register_user(user_id, password, ip, email, nickname, realname, career, addr
     Returns:
         TYPE: Description
     """
-    url = cfg.config.get('ptt_server', '') + '/register'
-
-    params = {
-        'UserID': user_id,
-        'Passwd': password,
-        'IP': ip,
-
-        'Email': email,
-        'Nickname': nickname,
-        'Realname': realname,
-        'Career': career,
-        'Address': address,
-        'Over18': over18,
-    }
-    err, result = http_post(url, params)
-    if err is not None:
-        return err, result
-
-    jwt = result.get('Jwt', '')
-
-    pyutil_mongo.db_update('user', {'user_id': user_id}, {'jwt': jwt, 'active': True, 'last_login': get_current_milli_ts()})
-
-    return None, jwt
-
-
-def validate_user(user_id, password, ip):
-    """validate user
-
-    Args:
-        user_id (TYPE): Description
-        password (TYPE): Description
-        ip (TYPE): Description
-
-    Returns:
-        TYPE: Description
-    """
-    url = cfg.config.get('ptt_server', '') + '/login'
-    err, result = http_post(url, {'UserID': user_id, 'Passwd': password, "IP": ip})
-    if err is not None:
-        return err, ''
-
-    jwt = result.get('Jwt', '')
-
-    pyutil_mongo.db_update('user', {'user_id': user_id}, {'jwt': jwt, 'active': True, 'last_login': get_current_milli_ts()})
-
-    return None, jwt

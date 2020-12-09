@@ -15,6 +15,10 @@ _USER_COLLECTION_MAP = {
     'user': 'user',
     'role': 'role',
     'permission': 'permission',
+    'client': 'client',
+    'access_token': 'access_token',  # set ttl in index.
+    'user_read_board': 'user_read_board',  # ensure-index
+    'user_read_article': 'user_read_article',  # ensure-index
 }
 
 _DEFAULT_USER_DB_NAME = 'user'
