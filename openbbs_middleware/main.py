@@ -13,7 +13,7 @@ import rapidjson as json
 import flask
 import flask_login
 from flask import send_from_directory, jsonify
-from flask_security import login_required
+# from flask_security import login_required
 from flask_security import views
 
 from gevent.pywsgi import WSGIServer
@@ -21,7 +21,7 @@ from flask_swagger import swagger
 
 from openbbs_middleware import cfg
 from openbbs_middleware.http_server import util_flask
-from openbbs_middleware.http_server.util_flask import app, crossdomain
+from openbbs_middleware.http_server.util_flask import app, crossdomain, login_required, get_user_id
 
 _APP_PREFIX = '/api'
 
@@ -48,7 +48,7 @@ with open('apidoc/template.json', 'r') as f:
 def before_request():
     """before-request
     """
-    flask.g.user = flask_login.current_user
+    flask.g.user = get_user_id()
 
 
 @app.route('/')
@@ -73,6 +73,49 @@ def spec():
 
     swag = swagger(app, from_file_keyword='swagger_from_file', template=template)
     return jsonify(swag)
+
+
+from openbbs_middleware.api import register_client
+@app.route(_with_app_prefix(register_client.ROUTE), methods=['POST'])
+@crossdomain()
+def _register_client():
+    """
+    Returns:
+        TYPE: Description
+    """
+    params = util_flask.process_json()
+    err, result = register_client.register_client(params)
+    return util_flask.process_result(err, result)
+
+
+from openbbs_middleware.api import account_login
+@app.route(_with_app_prefix(account_login.ROUTE), methods=['POST'])
+@crossdomain()
+def _login():
+    """
+    swagger_from_file: apidoc/account_login.yaml
+
+    Returns:
+        TYPE: Description
+    """
+    params = util_flask.process_json()
+    err, result = account_login.account_login(params)
+    return util_flask.process_result(err, result)
+
+
+from openbbs_middleware.api import account_register
+@app.route(_with_app_prefix(account_register.ROUTE), methods=['POST'])
+@crossdomain()
+def _register():
+    """
+    swagger_from_file: apidoc/account_register.yaml
+
+    Returns:
+        TYPE: Description
+    """
+    params = util_flask.process_json()
+    err, result = account_register.account_register(params)
+    return util_flask.process_result(err, result)
 
 
 from openbbs_middleware.api.get_popular_post import get_popular_post
@@ -248,11 +291,11 @@ def _get_board_detail(board):
 
 
 from openbbs_middleware.api.get_board_title import get_board_title
-@app.route(_with_app_prefix('/Board/Title/<board>'))
+@app.route(_with_app_prefix('/Board/summary/<board>'))
 @crossdomain()
 def _get_board_title(board):
     """
-    swagger_from_file: apidoc/get_board_title.yaml
+    swagger_from_file: apidoc/get_board_summary.yaml
 
     Args:
         board (TYPE): Description

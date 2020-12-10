@@ -11,6 +11,7 @@ Attributes:
 # XXX
 # patch register_user
 ##########
+from functools import wraps
 from flask_security import registerable
 from flask_security import views
 from openbbs_middleware.http_server.register_user import register_user
@@ -61,13 +62,29 @@ login_manager = flask_login.LoginManager()
 login_manager.init_app(app)
 
 
+def process_json():
+    return request.get_json(force=True)
+
+
 def process_params():
     """Summary
 
     Returns:
         TYPE: Description
     """
-    return None
+    qs_dict = request.values
+    form_dict = request.form
+
+    result = {}
+    for key, val in qs_dict.items():
+        result_val = val if not isinstance(val, list) else val[-1]
+        result[key] = result_val
+
+    for key, val in form_dict.items():
+        result_val = val if not isinstance(val, list) else val[-1]
+        result[key] = result_val
+
+    return result
 
 
 def process_result(err, the_dict, status_code=200, mime='application/json', headers=None):
@@ -161,10 +178,10 @@ def _init_config():
 
         'SECURITY_REGISTERABLE': cfg.config.get('flask_security_registerable', True),
         'SECURITY_CONFIRMABLE': cfg.config.get('flask_security_confirmable', False),
-        'SECURITY_LOGIN_URL': '/Account/login',
-        'SECURITY_REGISTER_URL': '/Account/register',
-        'SECURITY_LOGOUT_URL': '/Account/logout',
-        'SECURITY_POST_LOGOUT_VIEW': '/Account/login',
+        'SECURITY_LOGIN_URL': '/login',
+        'SECURITY_REGISTER_URL': '/register',
+        'SECURITY_LOGOUT_URL': '/logout',
+        'SECURITY_POST_LOGOUT_VIEW': '/login',
         'SECURITY_EMAIL_SENDER': cfg.config.get('mail_sender', 'noreply@localhost'),
         'MAIL_DEBUG': True,
         'MAIL_SERVER': cfg.config.get('mail_server', 'localhost'),
@@ -338,8 +355,6 @@ def crossdomain(origin=None, methods=None, headers=None,
             Returns:
                 TYPE: Description
             """
-            cfg.logger.warning('origin: (%s/%s)', origin, type(origin))
-
             if automatic_options and request.method == 'OPTIONS':
                 resp = current_app.make_default_options_response()
             else:
@@ -368,3 +383,36 @@ def crossdomain(origin=None, methods=None, headers=None,
         f.provide_automatic_options = False
         return update_wrapper(wrapped_function, f)
     return decorator
+
+
+def login_required(f):
+    @wraps(f)
+    def decorator(*args, **kwargs):
+        if not flask.g.user:
+            return process_result(Exception('invalid user'), {}, status_code=401)
+
+        return f(*args, **kwargs)
+
+    return decorator
+
+
+def get_user_id():
+    authorization = request.headers.get('Authorization')
+    if not authorization:
+        return None
+
+    prefix = 'bearer '
+
+    if not authorization.startswith(prefix):
+        return None
+
+    authorization = authorization[len(prefix):]
+
+    err, db_result = pyutil_mongo.db_find_one('access_token', {'access_token': authorization})
+    if err:
+        return None
+
+    if not db_result:
+        return None
+
+    return db_result.get('user_id')

@@ -12,3 +12,7 @@ def get_current_milli_ts():
         TYPE: Description
     """
     return int(time.time() * 1000)
+
+
+def ts_to_milli_ts(ts):
+    return int(ts) * 1000

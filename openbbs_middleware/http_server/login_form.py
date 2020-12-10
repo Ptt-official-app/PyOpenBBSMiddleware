@@ -6,8 +6,7 @@ import requests
 from flask_security.forms import LoginForm as SecurityLoginForm, StringField, get_form_field_label
 from flask_security import UserMixin
 
-from openbbs_middleware.http_server.utils import get_ip
-from openbbs_middleware.http_server.utils import validate_user
+from openbbs_middleware.account.validate_user import validate_user
 
 import pyutil_mongo
 
@@ -49,9 +48,8 @@ class LoginForm(SecurityLoginForm):
         """
         username = self.data.get('username', '')
         password = self.data.get('password', '')
-        ip = get_ip()
 
-        err, jwt = validate_user(username, password, ip)
+        err, jwt = validate_user(username, password)
         if err:
             return False
 
