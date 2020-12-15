@@ -2,6 +2,14 @@
 
 Python middleware for OpenBBS.
 
+## Transferred to [go-openbbsmiddleware](https://github.com/Ptt-official-app/go-openbbsmiddleware)
+
+After few weeks of python-development, we realized that the typeless feature of python
+may be the bottleneck of the development in the foresee future.
+
+We switched to [go-openbbsmiddleware](https://github.com/Ptt-official-app/go-openbbsmiddleware)
+and continued the development starting from v0.3.0
+
 ## Docker
 
 You can run docker with the following steps:
