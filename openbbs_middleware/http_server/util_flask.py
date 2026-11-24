@@ -18,6 +18,7 @@ from openbbs_middleware.http_server.register_user import register_user
 registerable.register_user = register_user
 views.register_user = register_user
 
+import secrets
 from functools import update_wrapper
 from bson.objectid import ObjectId
 import rapidjson as json
@@ -130,17 +131,22 @@ def init_flask():
 def _init_config():
     """Summary
     """
-    flask_secret_key = 'default_flask_secret_key'
+    # no well-known default: random per-process secrets if not configured.
+    flask_secret_key = secrets.token_hex(32)
     secret_file = cfg.config.get('flask_secret_file', '')
     if secret_file:
         with open(secret_file, 'r') as f:
             flask_secret_key = f.read()
+    else:
+        cfg.logger.warning('util_flask._init_config: flask_secret_file is not set. using a random secret key.')
 
-    flask_security_salt = 'default_flask_secret_salt'
+    flask_security_salt = secrets.token_hex(32)
     salt_file = cfg.config.get('flask_security_salt_file', '')
     if salt_file:
         with open(salt_file, 'r') as f:
             flask_security_salt = f.read()
+    else:
+        cfg.logger.warning('util_flask._init_config: flask_security_salt_file is not set. using a random salt.')
 
     mongo_protocol = cfg.config.get('mongo_protocol', 'mongodb')
     mongo_host = cfg.config.get('mongo_host', 'localhost')
