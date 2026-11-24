@@ -31,7 +31,7 @@ def deserialize_board_summary(serialized, read_map=None):
     if read_map is not None:
         read_milli_ts = read_map.get(idx, 0)
     else:
-        err, db_result = pyutil_mongo.find_one('user_read_board', {'idx': idx})
+        err, db_result = pyutil_mongo.db_find_one('user_read_board', {'idx': idx})
         if err:
             return err, {}
         read_milli_ts = db_result.get('update_milli_ts', 0)
