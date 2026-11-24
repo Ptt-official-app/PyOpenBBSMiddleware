@@ -27,7 +27,7 @@ You can run docker with the following steps:
 You can start developing with the following steps:
 
 * `git clone [repo]`
-* `./scripts/clone_projet.sh`
+* `./scripts/clone_project.sh`
 
 Use the following template-script to start a module (automatically generate code-files and test-files):
 
